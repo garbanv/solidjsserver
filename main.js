@@ -1,12 +1,20 @@
 require('dotenv').config()
 const express = require('express')
 const db = require("./dbConfig");
+const { urlencoded } = require('express')
 const app = express()
 const port = 5500
 var cors = require('cors')
 app.use(cors())
+
+
+
+app.use(express.json());
+
+app.use(urlencoded({extended:false}))
+
 app.get('/', async (req, res) => {
-    console.log("hola")
+
     try {
         const data = await db.query('select am.entityname ,am.entityhomepage ,am."cluster" ,am.description ,am.logo_do ,am.isactive from apilandscape.apiprovidersmain am ');
         
