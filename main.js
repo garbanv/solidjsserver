@@ -16,7 +16,7 @@ app.use(urlencoded({extended:false}))
 app.get('/', async (req, res) => {
 
     try {
-        const data = await db.query('select am.entityname ,am.entityhomepage ,am."cluster" ,am.description ,am.logo_do ,am.isactive from apilandscape.apiprovidersmain');
+        const data = await db.query('select am.entityname ,am.entityhomepage ,am."cluster" ,am.description ,am.logo_do ,am.isactive from apilandscape.apiprovidersmain am');
         
         if (data.rowCount < 1) {
           return res.status(404).send('no data found')
