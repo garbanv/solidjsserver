@@ -1,0 +1,52 @@
+require('dotenv').config()
+const express = require('express')
+const db = require("./dbConfig");
+const app = express()
+const port = 5500
+var cors = require('cors')
+app.use(cors())
+app.get('/', async (req, res) => {
+    console.log("hola")
+    try {
+        const data = await db.query('select am.entityname ,am.entityhomepage ,am."cluster" ,am.description ,am.logo_do ,am.isactive from apilandscape.apiprovidersmain am ');
+        
+        if (data.rowCount < 1) {
+          return res.status(404).send('no data found')
+        }
+        const response = data.rows;
+        response.forEach((element,index) => {
+          element.id=index
+        });
+        console.log(response)
+        res.send(response.sort(function(a,b) {
+          return a.entityname - b.entityname;
+      }));
+      }catch(error) {
+        console.log("error del server", error)
+        return res.status(500).send('An error ocurred')
+      }
+})
+
+app.get('/:entityname', async (req, res) => {
+  const { entityname } = req.params;
+
+  console.log("entityname",entityname)
+    
+  try {
+      const data = await db.query('select * from apilandscape.apiprovidersmain where entityname = $1', [entityname]);
+      
+      if (data.rowCount < 1) {
+        return res.status(404).send('no data found')
+      }
+      const response = data.rows;
+
+      res.send(response);
+    }catch(error) {
+      console.log("error del server", error)
+      return res.status(500).send('An error ocurred')
+    }
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
